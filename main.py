@@ -75,8 +75,14 @@ def rename_file(filename):
         print("file does not exist")
         input("Press enter key to continue...")
 
-def delete_file():
-    pass
+def delete_file(filename):
+    if os.path.exists(filename):
+        os.remove(filename)
+        print("File removed successfully.")
+        input("Press enter to continue...")
+    else:
+        print("file does not exist")
+        input("Press enter key to continue...")
 
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -118,6 +124,8 @@ What would you like to do?
                 break
             case "5":
                 clear_console()
+                file = input_file_name()
+                delete_file(file)
                 break
             case "6":
                 clear_console()
