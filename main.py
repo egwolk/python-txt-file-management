@@ -22,16 +22,7 @@ def write_file(filename):
             yn = input("Y|N: ").lower().strip()
             match yn:
                 case "y":
-                    content = []
-                    clear_console()
-                    print("Start writing your file content [press enter twice to finish]:")
-                    while True:
-                        line = input()
-                        if line:
-                            content.append(line + "\n")
-                        else: break
-                    with open(filename, "w") as file:
-                        file.writelines(content)
+                    file_writer(filename)
                     break
                 case "n":
                     print("operation cancelled")
@@ -39,7 +30,21 @@ def write_file(filename):
                     break
                 case _:
                     print("invalid input. Try again")
-            
+    else: file_writer(filename)
+
+def file_writer(filename):
+    content = []
+    clear_console()
+    print("Start writing your file content [press enter twice to finish]:")
+    while True:
+        line = input()
+        if line:
+            content.append(line + "\n")
+        else: break
+    with open(filename, "w") as file:
+        file.writelines(content)
+    clear_console()
+    read_file(filename)            
     
 
 def append_file():
