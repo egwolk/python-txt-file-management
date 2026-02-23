@@ -1,15 +1,11 @@
 import os, sys
 
 def read_file(filename):
-    try:
-        with open(filename, "r") as file:
+    with open(filename, "r") as file:
             print(f"{filename} contents:")
             for line in file:
                 print(f"{line.strip()}")
             input("Press enter key to continue...")
-    except:
-        print("file does not exist")
-        input("Press enter key to continue...")
 
 def input_file_name():
     file = input("Enter txt file name[no extension]: ")
@@ -32,7 +28,7 @@ def write_file(filename):
                     print("invalid input. Try again")
     else: file_writer(filename)
 
-def file_writer(filename):
+def file_content():
     content = []
     clear_console()
     print("Start writing your file content [press enter twice to finish]:")
@@ -41,14 +37,35 @@ def file_writer(filename):
         if line:
             content.append(line + "\n")
         else: break
+    return content
+
+def file_writer(filename):
+    content = file_content()
     with open(filename, "w") as file:
         file.writelines(content)
     clear_console()
     read_file(filename)            
     
 
-def append_file():
-    pass
+def append_file(filename):
+    clear_console()
+    read_file(filename)
+    content = file_content()
+    with open(filename, "a") as file:
+        file.writelines(content)
+    clear_console()
+    print(f"{filename} with appended data:\n")
+    read_file(filename) 
+
+def file_checker(choice, filename):
+    try:
+        match choice:
+            case "1": read_file(filename)
+            case "3": append_file(filename)
+    except:
+        print("file does not exist")
+        input("Press enter key to continue...")
+
 def rename_file():
     pass
 def delete_file():
@@ -75,7 +92,7 @@ What would you like to do?
             case "1":
                 clear_console()
                 file = input_file_name()
-                read_file(file)
+                file_checker(user_input, file)
                 break
             case "2":
                 clear_console()
@@ -84,6 +101,8 @@ What would you like to do?
                 break
             case "3":
                 clear_console()
+                file = input_file_name()
+                file_checker(user_input, file)
                 break
             case "4":
                 clear_console()
