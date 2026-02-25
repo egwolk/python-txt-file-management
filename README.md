@@ -30,7 +30,16 @@ This project was developed for educational purposes to demonstrate fundamental f
    cd data-science-study
    ```
 
-2. **Run the program**:
+2. **(Optional) Set up a virtual environment**:
+   ```bash
+   # Create virtual environment
+   python -m venv venv
+   
+   # Activate virtual environment
+   venv\Scripts\activate
+   ```
+
+3. **Run the program**:
    ```bash
    python main.py
    ```
@@ -39,12 +48,14 @@ This project was developed for educational purposes to demonstrate fundamental f
 
 ### Building an Executable with PyInstaller
 
-1. **Install PyInstaller**:
+1. **(Optional) Set up and activate virtual environment** (see step 2 above)
+
+2. **Install PyInstaller**:
    ```bash
    pip install pyinstaller
    ```
 
-2. **Build the executable**:
+3. **Build the executable**:
    ```bash
    pyinstaller --onefile --name "Text File Manager" main.py
    ```
@@ -56,7 +67,7 @@ This project was developed for educational purposes to demonstrate fundamental f
    pyinstaller "Text File Manager.spec"
    ```
 
-3. **Run the executable**:
+4. **Run the executable**:
    ```cmd
    dist\Text File Manager.exe
    ```
