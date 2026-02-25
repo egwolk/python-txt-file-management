@@ -1,97 +1,43 @@
 import os, sys
 
-def read_file(filename):
-    with open(filename, "r") as file:
-        return [line.strip() for line in file]
-
-def display_file(filename, contents):
-    print(f"{filename} contents:")
-    for line in contents:
-        print(line)
-    input("Press enter key to continue...")
-
-def input_file_name(prompt="Enter txt file name: "):
-    file = input(prompt).strip()
-    if file.endswith(".txt"):
-        return file
-    return file + ".txt"
-
-def write_file(filename):
-    if os.path.exists(filename):
-        print(f"File with name {filename} already exists.\nOverwrite file?")
-        while True:
-            yn = input("Y|N: ").lower().strip()
-            match yn:
-                case "y":
-                    file_writer(filename)
-                    break
-                case "n":
-                    print("operation cancelled")
-                    input("Press enter key to continue...")
-                    break
-                case _:
-                    print("invalid input. Try again")
-    else: file_writer(filename)
-
-def file_content():
-    content = []
-    clear_console()
-    print("Start writing your file content [press enter twice to finish]:")
-    while True:
-        line = input()
-        if line:
-            content.append(line + "\n")
-        else: break
-    return content
-
-def file_writer(filename):
-    content = file_content()
-    with open(filename, "w") as file:
-        file.writelines(content)
-    clear_console()
-    contents = read_file(filename)
-    display_file(filename, contents)          
+class FileManager:
+    def read_file(self, filename):
+        with open(filename, "r") as file:
+            return [line.strip() for line in file]
     
+    def write_file(self, filename, content):
+        with open(filename, "w") as file:
+            file.writelines(content)
+    
+    def append_to_file(self, filename, content):
+        with open(filename, "a") as file:
+            file.writelines(content)
+    
+    def rename_file(self, old_name, new_name):
+        os.rename(old_name, new_name)
+    
+    def delete_file(self, filename):
+        os.remove(filename)
+    
+    def file_exists(self, filename):
+        return os.path.exists(filename)
 
-def append_file(filename):
-    clear_console()
-    read_file(filename)
-    content = file_content()
-    with open(filename, "a") as file:
-        file.writelines(content)
-    clear_console()
-    print(f"{filename} with appended data:\n")
-    contents = read_file(filename)
-    display_file(filename, contents)
 
-def file_checker(choice, filename):
-    try:
-        match choice:
-            case "1": 
-                contents = read_file(filename)
-                display_file(filename, contents)
-            case "3": append_file(filename)
-            case "4": rename_file(filename)
-            case "5":delete_file(filename)
-    except:
-        print("file does not exist")
+class UIManager:
+    def __init__(self, file_manager):
+        self.file_manager = file_manager
+    
+    def clear_console(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+    
+    def display_file(self, filename, contents):
+        print(f"{filename} contents:")
+        for line in contents:
+            print(line)
         input("Press enter key to continue...")
-
-def rename_file(filename):
-    os.rename(filename, input_file_name(prompt="Enter new file name: "))
-    print("File renamed successfully.")
-    input("Press enter to continue...")
-
-def delete_file(filename):
-    os.remove(filename)
-    print("File removed successfully.")
-    input("Press enter to continue...")
-
-def clear_console():
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-def display_menu():
-    print("""
+    
+    def display_menu(self):
+        print("""
 What would you like to do?
 [1] Read a file
 [2] Create a new file
@@ -101,49 +47,135 @@ What would you like to do?
 [6] Read program docs
 [7] Exit
 """)
-
-def user_operation():
-    while True:
-        user_input = input("Your choice: ")
-        match user_input:
-            case "1":
-                clear_console()
-                file = input_file_name()
-                file_checker(user_input, file)
-                break
-            case "2":
-                clear_console()
-                file = input_file_name()
-                write_file(file)
-                break
-            case "3":
-                clear_console()
-                file = input_file_name()
-                file_checker(user_input, file)
-                break
-            case "4":
-                clear_console()
-                file = input_file_name()
-                file_checker(user_input, file)
-                break
-            case "5":
-                clear_console()
-                file = input_file_name()
-                file_checker(user_input, file)
-                break
-            case "6":
-                clear_console()
-                break
-            case "7":
-                clear_console()
-                sys.exit("bye bye")
-            case _:
-                print("invalid input. try again")
-
-while True:
-    clear_console()
-    display_menu()
-    user_operation()
-
     
+    def input_file_name(self, prompt="Enter txt file name: "):
+        file = input(prompt).strip()
+        if file.endswith(".txt"):
+            return file
+        return file + ".txt"
+    
+    def get_file_content(self):
+        content = []
+        self.clear_console()
+        print("Start writing your file content [press enter twice to finish]:")
+        while True:
+            line = input()
+            if line:
+                content.append(line + "\n")
+            else:
+                break
+        return content
+    
+    def confirm_overwrite(self, filename):
+        print(f"File with name {filename} already exists.\nOverwrite file?")
+        while True:
+            yn = input("Y|N: ").lower().strip()
+            match yn:
+                case "y":
+                    return True
+                case "n":
+                    print("operation cancelled")
+                    input("Press enter key to continue...")
+                    return False
+                case _:
+                    print("invalid input. Try again")
+    
+    def handle_read_file(self):
+        self.clear_console()
+        filename = self.input_file_name()
+        try:
+            contents = self.file_manager.read_file(filename)
+            self.display_file(filename, contents)
+        except FileNotFoundError:
+            print("file does not exist")
+            input("Press enter key to continue...")
+    
+    def handle_create_file(self):
+        self.clear_console()
+        filename = self.input_file_name()
         
+        if self.file_manager.file_exists(filename):
+            if not self.confirm_overwrite(filename):
+                return
+        
+        content = self.get_file_content()
+        self.file_manager.write_file(filename, content)
+        self.clear_console()
+        contents = self.file_manager.read_file(filename)
+        self.display_file(filename, contents)
+    
+    def handle_append_file(self):
+        self.clear_console()
+        filename = self.input_file_name()
+        
+        try:
+            contents = self.file_manager.read_file(filename)
+            self.display_file(filename, contents)
+            
+            content = self.get_file_content()
+            self.file_manager.append_to_file(filename, content)
+            
+            self.clear_console()
+            print(f"{filename} with appended data:\n")
+            contents = self.file_manager.read_file(filename)
+            self.display_file(filename, contents)
+        except FileNotFoundError:
+            print("file does not exist")
+            input("Press enter key to continue...")
+    
+    def handle_rename_file(self):
+        self.clear_console()
+        old_filename = self.input_file_name()
+        
+        try:
+            new_filename = self.input_file_name(prompt="Enter new file name: ")
+            self.file_manager.rename_file(old_filename, new_filename)
+            print("File renamed successfully.")
+            input("Press enter to continue...")
+        except FileNotFoundError:
+            print("file does not exist")
+            input("Press enter key to continue...")
+    
+    def handle_delete_file(self):
+        self.clear_console()
+        filename = self.input_file_name()
+        
+        try:
+            self.file_manager.delete_file(filename)
+            print("File removed successfully.")
+            input("Press enter to continue...")
+        except FileNotFoundError:
+            print("file does not exist")
+            input("Press enter key to continue...")
+    
+    def run(self):
+        while True:
+            self.clear_console()
+            self.display_menu()
+            
+            user_input = input("Your choice: ")
+            match user_input:
+                case "1":
+                    self.handle_read_file()
+                case "2":
+                    self.handle_create_file()
+                case "3":
+                    self.handle_append_file()
+                case "4":
+                    self.handle_rename_file()
+                case "5":
+                    self.handle_delete_file()
+                case "6":
+                    self.clear_console()
+                case "7":
+                    self.clear_console()
+                    sys.exit("bye bye")
+                case _:
+                    print("invalid input. try again")
+                    input("Press enter to continue...")
+
+
+if __name__ == "__main__":
+    file_manager = FileManager()
+    ui_manager = UIManager(file_manager)
+    ui_manager.run()
