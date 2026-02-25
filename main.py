@@ -2,10 +2,13 @@ import os, sys
 
 def read_file(filename):
     with open(filename, "r") as file:
-            print(f"{filename} contents:")
-            for line in file:
-                print(f"{line.strip()}")
-            input("Press enter key to continue...")
+        return [line.strip() for line in file]
+
+def display_file(filename, contents):
+    print(f"{filename} contents:")
+    for line in contents:
+        print(line)
+    input("Press enter key to continue...")
 
 def input_file_name(prompt="Enter txt file name: "):
     file = input(prompt).strip()
@@ -46,7 +49,8 @@ def file_writer(filename):
     with open(filename, "w") as file:
         file.writelines(content)
     clear_console()
-    read_file(filename)            
+    contents = read_file(filename)
+    display_file(filename, contents)          
     
 
 def append_file(filename):
@@ -57,12 +61,15 @@ def append_file(filename):
         file.writelines(content)
     clear_console()
     print(f"{filename} with appended data:\n")
-    read_file(filename) 
+    contents = read_file(filename)
+    display_file(filename, contents)
 
 def file_checker(choice, filename):
     try:
         match choice:
-            case "1": read_file(filename)
+            case "1": 
+                contents = read_file(filename)
+                display_file(filename, contents)
             case "3": append_file(filename)
     except:
         print("file does not exist")
@@ -89,8 +96,7 @@ def delete_file(filename):
 def clear_console():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-while True:
-    clear_console()
+def display_menu():
     print("""
 What would you like to do?
 [1] Read a file
@@ -101,6 +107,8 @@ What would you like to do?
 [6] Read program docs
 [7] Exit
 """)
+
+def user_operation():
     while True:
         user_input = input("Your choice: ")
         match user_input:
@@ -137,3 +145,11 @@ What would you like to do?
                 sys.exit("bye bye")
             case _:
                 print("invalid input. try again")
+
+while True:
+    clear_console()
+    display_menu()
+    user_operation()
+
+    
+        
