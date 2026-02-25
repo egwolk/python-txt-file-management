@@ -7,8 +7,8 @@ def read_file(filename):
                 print(f"{line.strip()}")
             input("Press enter key to continue...")
 
-def input_file_name():
-    file = input("Enter txt file name[no extension]: ")
+def input_file_name(prompt="Enter txt file name: "):
+    file = input(prompt)
     return file + ".txt"
 
 def write_file(filename):
@@ -68,7 +68,7 @@ def file_checker(choice, filename):
 
 def rename_file(filename):
     if os.path.exists(filename):
-        os.rename(filename, input_file_name())
+        os.rename(filename, input_file_name(prompt="Enter new file name: "))
         print("File renamed successfully.")
         input("Press enter to continue...")
     else:
